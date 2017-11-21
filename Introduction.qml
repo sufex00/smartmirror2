@@ -2,41 +2,58 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
+import QtQuick.Controls.Styles 1.4
+import "keyboard" as CustomKeyboard
 
 Item {
     id: rect
-    //    width: 100; height: 100
-    //    anchors.fill: parent
+    signal finishedSignupBluttoth()
+    signal finishedSignupDigit()
+    property bool signUpWithBluetooth
+    Timer {
+        id: timer
+        interval: 1000; running: false; repeat: false;
+        onTriggered: {
+            stackView.pop();
+        }
+    }
 
-
-    Item {
-//        anchors.right: parent.right
-//        anchors.bottom: parent.bottom
-//        anchors.leftMargin: 250
-//        anchors.margins: 50
-        anchors.bottom: logo.top
-        anchors.right: parent.right
-        anchors.rightMargin: 200
-        anchors.bottomMargin: 150
-
-        Label {
-            topPadding: 35
-            leftPadding: 27
-            font: Qt.font({ family: "Serif", weight: Font.Bold })
-            text: {
-                if(swipeView.currentIndex == 0)
-                    "Defina uma senha\nde 3 dígitos para\nseu SmartMirror."
-                else if(swipeView.currentIndex == 1)
-                    "Agora precisamos\nque você nos conec-\nte ao seu wifi."
-                else
-                    "Para terminar,\nconfigure sua rede\nsocial preferida."
+    Component {
+        id: settingsBluettoth
+        SettingsBluettoth {
+            onAdvanceSwipeView: {
+                swipeView.currentIndex += 1
+                signUpWithBluetooth = true
+                controller.setNewUser(user)
+                stackView.pop();
             }
         }
-        Image {
-            source: "qrc:/ballon.png"
-            height: 172
-            width: 200
-            rotation: -20
+    }
+
+    Component {
+        id: settingsDigit
+        SettingsDigit {
+            onAdvanceSwipeView: {
+                swipeView.currentIndex += 1
+                signUpWithBluetooth = false
+                controller.setNewUser(user)
+                stackView.pop();
+            }
+        }
+    }
+
+    Label {
+        bottomPadding: 5
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        font: Qt.font({ pixelSize: 30, family: "Serif", weight: Font.Bold })
+        text: {
+            if(swipeView.currentIndex == 0)
+                "Defina um tipo de desbloqueio"
+            else if(swipeView.currentIndex == 1)
+                "Conecte-nos ao seu wifi"
+            else
+                "Forneça seu usuário do twitter"
         }
     }
     Image {
@@ -73,69 +90,27 @@ Item {
         //            onTriggered: swipeView.currentIndex += 1
         //        }
         Item {
-            id: login
-            property var password: new Array
-            SequentialAnimation {
-                id: animation
-                NumberAnimation { target: login; property: "x"; to: 20; duration: 200 }
-                NumberAnimation { target: login; property: "x"; to: -20; duration: 100 }
-                NumberAnimation { target: login; property: "x"; to: 0; duration: 200 }
-                onStopped: {
-                    login.password[0].highlighted = false
-                    login.password[1].highlighted = false
-                    login.password[2].highlighted = false
-                    login.password = []
-                    login.enabled = true
-                }
-            }
-            function analysePassword(){
-                login.enabled = false
-                if(login.password[0].text === "1" && login.password[1].text === "2" && login.password[2].text === "3")
-//                    stackView.pop();
-                    swipeView.currentIndex += 1
-                else
-                    animation.running = true
-            }
-
-            GridView {
-                id: gridButton
-                model: ["7", "8", "9", "4", "5", "6", "1", "2", "3", "", "0", ""]
-                height: 400
-                width: 300
+            Row {
                 anchors.centerIn: parent
-                cellWidth: 100; cellHeight: 100
-                interactive: false
-
-                delegate:  Button {
-                    id: digitButton
-                    width: 80; height: 80
-                    visible: modelData != ""? true : false
-                    text: modelData
-                    highlighted: false
+                spacing: 10
+                Button {
+                    text: "Bluetooth"
+                    font: Qt.font({ pixelSize: 30, family: "Serif", weight: Font.Bold })
+                    height: 100
+                    width: 200
                     onClicked: {
-                        if (digitButton.highlighted == false) {
-                            digitButton.highlighted = true
-                            login.password.push(digitButton)
-                            if(login.password.length == 3) {
-                                login.analysePassword()
-
-                            }
-                        } else {
-                            login.password.pop()
-                            digitButton.highlighted = false
-                        }
-
+//                        bluetoothManager.registering(true);
+                        stackView.push(settingsBluettoth)
                     }
-                    font: Qt.font({ family: "Serif", pointSize: 24, weight: Font.Bold })
-                    background: Rectangle {
-                        id: backgroundButton
-
-                        color: digitButton.highlighted? Qt.rgba(0.9,0.9,0.9,0.6) : Qt.rgba(0.1,0.1,0.1,0.85)
-                        radius: height/2
-                        border.width: 2
-                        border.color: "white"
+                }
+                Button {
+                    text: "3 dígitos"
+                    font: Qt.font({ pixelSize: 30, family: "Serif", weight: Font.Bold })
+                    height: 100
+                    width: 200
+                    onClicked: {
+                        stackView.push(settingsDigit)
                     }
-
                 }
             }
         }
@@ -172,32 +147,26 @@ Item {
             }
         }
         Item {
-            Column {
-                anchors.centerIn: parent
-                spacing: 15
-                Label {
-                    text: "Configure sua rede social"
-                    font.weight: Font.Bold
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                TextField {
-                    placeholderText: qsTr("Rede")
-                    width: root.width/2
-                }
-                TextField {
-                    placeholderText: qsTr("Senha da rede")
-                    width: root.width/2
-                }
-                Button {
-                    text: "Entrar"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    onClicked: {
-                        stackView.pop();
-                        //swipeView.currentIndex += 1
-                    }
+            Image {
+                id: twitter
+                source: "qrc:/twitter/twitter.png"
+                height: 42
+                width: 50
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: 80
+//                anchors.bottom: keyboard.top
+            }
+            CustomKeyboard.Keyboard {
+                id: keyboard
+                onEnterClicked: {
+                    if(signUpWithBluetooth)
+                        finishedSignupBluttoth();
+                    else
+                        finishedSignupDigit();
+                    stackView.pop();
                 }
             }
+
         }
     }
 }

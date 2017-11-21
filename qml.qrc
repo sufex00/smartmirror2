@@ -11,5 +11,33 @@
         <file>13-Partly-Cloudy-icon.png</file>
         <file>giphy.gif</file>
         <file>ballon.png</file>
+        <file>SettingsBluettoth.qml</file>
+        <file>Definitions.js</file>
+        <file>SettingsDigit.qml</file>
+        <file>back.png</file>
+        <file>keypad.png</file>
+        <file>ConfirmDigit.qml</file>
+        <file>keyboard/Basic.qml</file>
+        <file>keyboard/TextBase.qml</file>
+        <file>keyboard/TextField.qml</file>
+        <file>bluetoothmanager.cpp</file>
+        <file>bluetoothmanager.h</file>
+        <file>main.cpp</file>
+        <file>networkmanager.cpp</file>
+        <file>networkmanager.h</file>
+        <file>keyboard/Keyboard.qml</file>
+        <file>keyboard/HandwritingModeButton.qml</file>
+        <file>keyboard/AutoScroller.qml</file>
+        <file>keyboard/ScrollBar.qml</file>
+        <file>keyboard/FloatingButton_Active.svg</file>
+        <file>keyboard/FloatingButton_Available.svg</file>
+        <file>keyboard/FloatingButton_Unavailable.svg</file>
+        <file>twitter/p_pedrinhu.csv</file>
+        <file>twitter/twitter.png</file>
+        <file>twitter/twitter_time_line.py</file>
+        <file>settings.png</file>
+        <file>update.png</file>
+        <file>UpdatePage.qml</file>
+        <file>door.png</file>
     </qresource>
 </RCC>
